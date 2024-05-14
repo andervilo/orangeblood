@@ -1,0 +1,35 @@
+version: '3'
+services:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - '9090:9090'
+    volumes:
+      - "./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - orange
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    volumes:
+        - "./grafana/provisioning:/etc/grafana/provisioning"
+    networks:
+      - orange
+
+  orangeblood:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    image: orangeblood
+    container_name: orangeblood
+    ports:
+      - '8082:8082'
+    networks:
+        - orange
+networks:
+  orange:
+    driver: bridge
